@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../MailAssistant.Application/MailAssistant.Application.csproj" />
+    <ProjectReference Include="../MailAssistant.Infrastructure/MailAssistant.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+

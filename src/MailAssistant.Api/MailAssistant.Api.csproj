@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../MailAssistant.Application/MailAssistant.Application.csproj" />
+    <ProjectReference Include="../MailAssistant.Infrastructure/MailAssistant.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+

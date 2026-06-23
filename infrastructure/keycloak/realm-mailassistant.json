@@ -1,0 +1,47 @@
+{
+  "realm": "mailassistant",
+  "enabled": true,
+  "displayName": "MailAssistant",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "owner",
+        "description": "Propriétaire d'une organisation"
+      },
+      {
+        "name": "admin",
+        "description": "Administrateur d'une organisation"
+      },
+      {
+        "name": "member",
+        "description": "Utilisateur standard"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "mailassistant-web",
+      "name": "MailAssistant Web",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "rootUrl": "http://localhost:5173",
+      "baseUrl": "http://localhost:5173",
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ]
+}
+

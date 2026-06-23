@@ -1,0 +1,48 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailAssistant.Domain", "src\MailAssistant.Domain\MailAssistant.Domain.csproj", "{89D48F19-A76B-4D39-93F8-8CD89D07B17D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailAssistant.Application", "src\MailAssistant.Application\MailAssistant.Application.csproj", "{5DE167A9-E561-44AF-92E5-6C98893F3D0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailAssistant.Infrastructure", "src\MailAssistant.Infrastructure\MailAssistant.Infrastructure.csproj", "{64C6C45E-9189-4EB2-A05D-33B91CB5C7BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailAssistant.Api", "src\MailAssistant.Api\MailAssistant.Api.csproj", "{4F8416CA-4EDD-4903-A38F-659B24A3D40C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailAssistant.Worker", "src\MailAssistant.Worker\MailAssistant.Worker.csproj", "{E659A5D1-DF7B-4E48-9B81-35FE71F0038F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailAssistant.UnitTests", "tests\MailAssistant.UnitTests\MailAssistant.UnitTests.csproj", "{4409D085-86A9-493F-A469-6AC2E955A35E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89D48F19-A76B-4D39-93F8-8CD89D07B17D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89D48F19-A76B-4D39-93F8-8CD89D07B17D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89D48F19-A76B-4D39-93F8-8CD89D07B17D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89D48F19-A76B-4D39-93F8-8CD89D07B17D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DE167A9-E561-44AF-92E5-6C98893F3D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DE167A9-E561-44AF-92E5-6C98893F3D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DE167A9-E561-44AF-92E5-6C98893F3D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DE167A9-E561-44AF-92E5-6C98893F3D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64C6C45E-9189-4EB2-A05D-33B91CB5C7BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64C6C45E-9189-4EB2-A05D-33B91CB5C7BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64C6C45E-9189-4EB2-A05D-33B91CB5C7BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64C6C45E-9189-4EB2-A05D-33B91CB5C7BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F8416CA-4EDD-4903-A38F-659B24A3D40C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F8416CA-4EDD-4903-A38F-659B24A3D40C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F8416CA-4EDD-4903-A38F-659B24A3D40C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F8416CA-4EDD-4903-A38F-659B24A3D40C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E659A5D1-DF7B-4E48-9B81-35FE71F0038F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E659A5D1-DF7B-4E48-9B81-35FE71F0038F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E659A5D1-DF7B-4E48-9B81-35FE71F0038F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E659A5D1-DF7B-4E48-9B81-35FE71F0038F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4409D085-86A9-493F-A469-6AC2E955A35E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4409D085-86A9-493F-A469-6AC2E955A35E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4409D085-86A9-493F-A469-6AC2E955A35E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4409D085-86A9-493F-A469-6AC2E955A35E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
