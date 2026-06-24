@@ -1,3 +1,4 @@
+using MailAssistant.Application.Common;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace MailAssistant.Api;
@@ -11,6 +12,12 @@ public sealed class ApiExceptionHandler : IExceptionHandler
     {
         var (statusCode, title) = exception switch
         {
+            AuthenticationRequiredException => (
+                StatusCodes.Status401Unauthorized,
+                "Authentication required"),
+            AccessDeniedException => (
+                StatusCodes.Status403Forbidden,
+                "Access denied"),
             ArgumentException => (StatusCodes.Status400BadRequest, "Invalid request"),
             KeyNotFoundException => (StatusCodes.Status404NotFound, "Resource not found"),
             InvalidOperationException => (StatusCodes.Status409Conflict, "Request conflict"),

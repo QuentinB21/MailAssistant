@@ -73,6 +73,16 @@ npm run dev
 
 Le frontend répond sur <http://localhost:5173>.
 
+La connexion utilise le realm Keycloak `mailassistant`. Les comptes de test et
+leur portée sont documentés dans
+[`docs/authentication.md`](docs/authentication.md).
+
+Pour vérifier les autorisations avec de vrais jetons :
+
+```powershell
+./scripts/test-auth.ps1
+```
+
 ## API du cœur métier
 
 L’itération 1 expose les routes suivantes :
@@ -83,6 +93,11 @@ L’itération 1 expose les routes suivantes :
 - CRUD `/api/organizations/{organizationId}/projects`
 - CRUD `/api/organizations/{organizationId}/projects/{projectId}/aliases`
 - `POST /api/organizations/{organizationId}/matching-tests`
+- `GET /api/me`
+- `GET /api/organizations/{organizationId}/members`
+- `PUT /api/organizations/{organizationId}/members/by-email`
+
+Toutes ces routes nécessitent désormais un jeton Keycloak valide.
 
 Exemple de test manuel :
 

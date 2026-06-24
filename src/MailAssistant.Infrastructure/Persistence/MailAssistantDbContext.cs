@@ -1,4 +1,5 @@
 using MailAssistant.Application.Abstractions;
+using MailAssistant.Domain.Identity;
 using MailAssistant.Domain.Organizations;
 using MailAssistant.Domain.Projects;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,11 @@ public sealed class MailAssistantDbContext(DbContextOptions<MailAssistantDbConte
     : DbContext(options), IUnitOfWork
 {
     public DbSet<Organization> Organizations => Set<Organization>();
+
+    public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
+
+    public DbSet<OrganizationMembership> OrganizationMemberships =>
+        Set<OrganizationMembership>();
 
     public DbSet<OrganizationSettings> OrganizationSettings => Set<OrganizationSettings>();
 

@@ -8,6 +8,7 @@ public static class ProjectEndpoints
     {
         var group = endpoints
             .MapGroup("/api/organizations/{organizationId:guid}")
+            .RequireAuthorization()
             .WithTags("Projects");
 
         group.MapGet(

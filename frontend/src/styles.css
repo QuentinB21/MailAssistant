@@ -57,3 +57,23 @@ body {
   text-transform: uppercase;
 }
 
+button {
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 0.75rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-action {
+  border: 1px solid #315bd8;
+  color: #ffffff;
+  background: #315bd8;
+}
+
+.secondary-action {
+  border: 1px solid #cad3e3;
+  color: #26334d;
+  background: #ffffff;
+}

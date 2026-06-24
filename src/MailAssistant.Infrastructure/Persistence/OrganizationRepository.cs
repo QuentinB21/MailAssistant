@@ -7,12 +7,17 @@ namespace MailAssistant.Infrastructure.Persistence;
 internal sealed class OrganizationRepository(MailAssistantDbContext dbContext)
     : IOrganizationRepository
 {
-    public async Task<IReadOnlyCollection<Organization>> ListAsync(
+    public async Task<IReadOnlyCollection<Organization>> ListForUserAsync(
+        Guid userId,
         CancellationToken cancellationToken)
     {
-        return await dbContext.Organizations
-            .AsNoTracking()
-            .OrderBy(organization => organization.Name)
+        return await (
+            from organization in dbContext.Organizations.AsNoTracking()
+            join membership in dbContext.OrganizationMemberships.AsNoTracking()
+                on organization.Id equals membership.OrganizationId
+            where membership.UserId == userId
+            orderby organization.Name
+            select organization)
             .ToArrayAsync(cancellationToken);
     }
 

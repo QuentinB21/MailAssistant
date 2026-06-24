@@ -1,4 +1,6 @@
 using MailAssistant.Application.Abstractions;
+using MailAssistant.Application.Identity;
+using MailAssistant.Domain.Identity;
 using MailAssistant.Domain.Matching;
 using MailAssistant.Domain.Projects;
 
@@ -7,6 +9,7 @@ namespace MailAssistant.Application.Projects;
 public sealed class ProjectService(
     IOrganizationRepository organizations,
     IProjectRepository projects,
+    OrganizationAccessService access,
     IUnitOfWork unitOfWork,
     ISubjectNormalizer subjectNormalizer,
     IMatchingStrategy matchingStrategy,
@@ -17,6 +20,10 @@ public sealed class ProjectService(
         Guid organizationId,
         CancellationToken cancellationToken)
     {
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Member,
+            cancellationToken);
         await EnsureOrganizationExistsAsync(organizationId, cancellationToken);
         var results = await projects.ListAsync(organizationId, cancellationToken);
         return results.Select(Map).ToArray();
@@ -27,6 +34,10 @@ public sealed class ProjectService(
         Guid projectId,
         CancellationToken cancellationToken)
     {
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Member,
+            cancellationToken);
         return Map(await GetProjectAsync(organizationId, projectId, cancellationToken));
     }
 
@@ -36,6 +47,10 @@ public sealed class ProjectService(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Admin,
+            cancellationToken);
         await EnsureOrganizationExistsAsync(organizationId, cancellationToken);
         await EnsureProjectNameIsAvailableAsync(
             organizationId,
@@ -63,6 +78,10 @@ public sealed class ProjectService(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Admin,
+            cancellationToken);
         var project = await GetProjectAsync(organizationId, projectId, cancellationToken);
         await EnsureProjectNameIsAvailableAsync(
             organizationId,
@@ -86,6 +105,10 @@ public sealed class ProjectService(
         Guid projectId,
         CancellationToken cancellationToken)
     {
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Admin,
+            cancellationToken);
         var project = await GetProjectAsync(organizationId, projectId, cancellationToken);
         projects.Remove(project);
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -97,6 +120,10 @@ public sealed class ProjectService(
         string value,
         CancellationToken cancellationToken)
     {
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Admin,
+            cancellationToken);
         var project = await GetProjectAsync(organizationId, projectId, cancellationToken);
         var alias = project.AddAlias(value, timeProvider.GetUtcNow());
 
@@ -112,6 +139,10 @@ public sealed class ProjectService(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Admin,
+            cancellationToken);
         var project = await GetProjectAsync(organizationId, projectId, cancellationToken);
         project.UpdateAlias(aliasId, command.Value, command.IsActive, timeProvider.GetUtcNow());
 
@@ -125,6 +156,10 @@ public sealed class ProjectService(
         Guid aliasId,
         CancellationToken cancellationToken)
     {
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Admin,
+            cancellationToken);
         var project = await GetProjectAsync(organizationId, projectId, cancellationToken);
         project.RemoveAlias(aliasId, timeProvider.GetUtcNow());
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -136,6 +171,10 @@ public sealed class ProjectService(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(subject);
+        await access.RequireAsync(
+            organizationId,
+            OrganizationRole.Member,
+            cancellationToken);
         await EnsureOrganizationExistsAsync(organizationId, cancellationToken);
 
         var organizationProjects = await projects.ListAsync(organizationId, cancellationToken);

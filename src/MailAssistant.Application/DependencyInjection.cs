@@ -1,3 +1,4 @@
+using MailAssistant.Application.Identity;
 using MailAssistant.Application.Organizations;
 using MailAssistant.Application.Projects;
 using MailAssistant.Domain.Matching;
@@ -15,6 +16,9 @@ public static class DependencyInjection
         services.AddSingleton<IConflictResolutionPolicy, ConflictResolutionPolicy>();
         services.AddScoped<OrganizationService>();
         services.AddScoped<ProjectService>();
+        services.AddScoped<CurrentUserService>();
+        services.AddScoped<OrganizationAccessService>();
+        services.AddScoped<MembershipService>();
 
         return services;
     }

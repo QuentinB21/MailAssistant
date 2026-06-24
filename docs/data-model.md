@@ -9,6 +9,27 @@ Tenant métier qui porte les projets et les règles de classement.
 - `CreatedAt`
 - `UpdatedAt`
 
+## ApplicationUser
+
+Référence locale minimale d’une identité Keycloak.
+
+- `Id`
+- `Subject` unique, issu de la claim `sub`
+- `Email`
+- `DisplayName`
+- `CreatedAt`
+- `UpdatedAt`
+
+## OrganizationMembership
+
+Association d’un utilisateur à une organisation.
+
+- `OrganizationId`
+- `UserId`
+- `Role` : `Owner`, `Admin` ou `Member`
+- `CreatedAt`
+- `UpdatedAt`
+
 ## OrganizationSettings
 
 Configuration de comportement du tenant.

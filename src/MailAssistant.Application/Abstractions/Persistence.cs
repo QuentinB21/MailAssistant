@@ -5,7 +5,9 @@ namespace MailAssistant.Application.Abstractions;
 
 public interface IOrganizationRepository
 {
-    Task<IReadOnlyCollection<Organization>> ListAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<Organization>> ListForUserAsync(
+        Guid userId,
+        CancellationToken cancellationToken);
 
     Task<Organization?> GetAsync(Guid organizationId, CancellationToken cancellationToken);
 

@@ -22,6 +22,8 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IMembershipRepository, MembershipRepository>();
         services.AddScoped<IUnitOfWork>(provider =>
             provider.GetRequiredService<MailAssistantDbContext>());
 

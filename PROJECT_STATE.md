@@ -8,13 +8,13 @@ chaque session significative. La vision et le découpage sont dans
 
 ## État global
 
-- Phase actuelle : sécurisation de l’application.
-- Itération active : itération 2 — identité, organisations et autorisations.
-- Dernière itération terminée : itération 1 — domaine, persistance et matching.
-- Statut du MVP : cœur métier et persistance opérationnels, authentification à réaliser.
+- Phase actuelle : construction de l’interface métier.
+- Itération active : itération 3 — interface projets et paramètres.
+- Dernière itération terminée : itération 2 — identité et autorisations.
+- Statut du MVP : cœur métier sécurisé, interface fonctionnelle à construire.
 - Dépôt Git : branche `main` reliée à `origin/main`.
 - Code applicatif : API CRUD projets/alias, matching, worker et frontend présents.
-- Tests : 16 tests .NET et 1 test Vitest validés.
+- Tests : 21 tests .NET et 2 tests Vitest validés.
 - Infrastructure locale : PostgreSQL, RabbitMQ et Keycloak validés avec Docker
   Compose.
 
@@ -47,18 +47,28 @@ chaque session significative. La vision et le découpage sont dans
 - [x] Exposition de l’API de test manuel d’un sujet.
 - [x] Validation du parcours API/PostgreSQL de bout en bout.
 - [x] Documentation du modèle de données et du moteur de matching.
+- [x] Validation des JWT émis par Keycloak avec audience API.
+- [x] Synchronisation locale minimale des utilisateurs Keycloak.
+- [x] Modélisation des appartenances et rôles par organisation.
+- [x] Protection de toutes les routes métier par authentification.
+- [x] Autorisations Owner/Admin/Member vérifiées côté application.
+- [x] Refus d’accès inter-organisations vérifié.
+- [x] Gestion simple des membres par email pour un Owner.
+- [x] Intégration React avec `keycloak-js` et PKCE S256.
+- [x] Conservation des tokens uniquement en mémoire côté frontend.
+- [x] Ajout d’un scénario d’intégration d’authentification reproductible.
 
 ## Prochaine étape recommandée
 
-Exécuter l’itération 2 dans cet ordre :
+Exécuter l’itération 3 dans cet ordre :
 
-1. Configurer la validation JWT Keycloak dans l’API.
-2. Modéliser les utilisateurs locaux et appartenances aux organisations.
-3. Synchroniser l’utilisateur à sa première connexion.
-4. Implémenter les rôles `Owner`, `Admin` et `Member`.
-5. Remplacer la confiance dans `organizationId` par une autorisation tenant.
-6. Ajouter les tests négatifs d’isolation entre organisations.
-7. Brancher l’authentification React et protéger les routes.
+1. Créer le shell authentifié et la sélection d’organisation.
+2. Créer les pages liste, création et modification de projet.
+3. Ajouter la gestion des alias et de leur activation.
+4. Ajouter le formulaire de test manuel d’un sujet.
+5. Afficher les permissions selon le rôle courant.
+6. Centraliser les appels API typés et les erreurs.
+7. Ajouter les tests UI des parcours critiques.
 
 ## Décisions provisoires
 
@@ -77,6 +87,7 @@ propriétaire du projet :
 | D-008 | Éviter de conserver le sujet brut dans l’historique | Proposée |
 | D-009 | Cibler .NET 10 pour le backend | Acceptée, remplace la décision initiale .NET 8 |
 | D-010 | Exiger Node.js 22.12+ et utiliser React avec Vite | Acceptée |
+| D-011 | Keycloak gère l’identité, les rôles tenant restent locaux | Acceptée, ADR 0005 |
 
 Lorsqu’une décision devient stable, créer un fichier dans
 `docs/adr/NNNN-titre.md`, puis remplacer son statut par `Acceptée`.
@@ -84,7 +95,7 @@ Lorsqu’une décision devient stable, créer un fichier dans
 ## Questions ouvertes
 
 - [x] Les projets sont exclusivement partagés par organisation.
-- [ ] Un utilisateur peut-il appartenir à plusieurs organisations ?
+- [x] Un utilisateur peut appartenir à plusieurs organisations.
 - [ ] Qui peut connecter et administrer un compte mail ?
 - [ ] Faut-il autoriser plusieurs labels Gmail en cas de plusieurs matchs ?
 - [ ] Quelle durée de conservation pour l’historique et les sujets ?
@@ -95,7 +106,7 @@ Lorsqu’une décision devient stable, créer un fichier dans
 
 ## Bloquants
 
-Aucun bloquant pour démarrer l’itération 2.
+Aucun bloquant pour démarrer l’itération 3.
 
 Node.js 22.23.1 est installé via WinGet. Les terminaux ouverts avant
 l’installation doivent être redémarrés pour récupérer le nouveau `PATH`.
@@ -165,6 +176,27 @@ Les intégrations réelles demanderont ultérieurement :
   Keycloak avant toute exposition réelle.
 - Prochaine action exacte : valider les JWT Keycloak et introduire les
   appartenances utilisateur/organisation.
+
+### 2026-06-24 — itération 2
+
+- Itération : 2 — identité, organisations et autorisations.
+- Objectif : sécuriser les routes métier et le cloisonnement multi-tenant.
+- Réalisé : validation JWT Keycloak, audience API, utilisateurs locaux,
+  appartenances, rôles Owner/Admin/Member, API membres et autorisations dans
+  les services applicatifs.
+- Frontend : `keycloak-js`, authorization code avec PKCE S256, garde
+  d’authentification, connexion/déconnexion et tokens conservés en mémoire.
+- Tests exécutés : build sans avertissement, 21 tests xUnit, 2 tests Vitest,
+  lint/build/audit frontend, migration appliquée, aucun changement de modèle
+  en attente, scénario réel Keycloak/PostgreSQL/API.
+- Scénarios réels : 401 sans token ; Owner et Admin en écriture ; Member en
+  lecture avec 403 en écriture ; utilisateur extérieur en 403.
+- Décision : identité Keycloak et rôles tenant locaux, ADR 0005.
+- Risques ou dettes : l’ajout d’un membre exige qu’il se soit déjà connecté ;
+  le client password-grant `mailassistant-tests` est réservé au développement
+  et doit être absent de la configuration de production.
+- Prochaine action exacte : construire l’interface projets/alias sur les API
+  sécurisées.
 
 ## Modèle de mise à jour pour la prochaine session
 

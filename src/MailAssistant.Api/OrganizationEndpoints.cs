@@ -8,6 +8,7 @@ public static class OrganizationEndpoints
         this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/api/organizations")
+            .RequireAuthorization()
             .WithTags("Organizations");
 
         group.MapGet(
