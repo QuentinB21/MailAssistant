@@ -19,6 +19,13 @@ public interface IOrganizationRepository
     Task AddAsync(Organization organization, CancellationToken cancellationToken);
 }
 
+public interface IOrganizationSettingsRepository
+{
+    Task<OrganizationSettings?> GetAsync(
+        Guid organizationId,
+        CancellationToken cancellationToken);
+}
+
 public interface IProjectRepository
 {
     Task<IReadOnlyCollection<Project>> ListAsync(

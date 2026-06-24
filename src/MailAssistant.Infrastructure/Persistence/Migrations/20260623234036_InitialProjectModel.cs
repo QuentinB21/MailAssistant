@@ -8,6 +8,12 @@ namespace MailAssistant.Infrastructure.Persistence.Migrations
     /// <inheritdoc />
     public partial class InitialProjectModel : Migration
     {
+        private static readonly string[] ProjectAliasUniqueIndexColumns =
+            ["ProjectId", "Value"];
+
+        private static readonly string[] ProjectUniqueIndexColumns =
+            ["OrganizationId", "Name"];
+
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -93,13 +99,13 @@ namespace MailAssistant.Infrastructure.Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_project_aliases_ProjectId_Value",
                 table: "project_aliases",
-                columns: new[] { "ProjectId", "Value" },
+                columns: ProjectAliasUniqueIndexColumns,
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_projects_OrganizationId_Name",
                 table: "projects",
-                columns: new[] { "OrganizationId", "Name" },
+                columns: ProjectUniqueIndexColumns,
                 unique: true);
         }
 

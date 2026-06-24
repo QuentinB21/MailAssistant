@@ -37,9 +37,11 @@ Configuration de comportement du tenant.
 - `OrganizationId`
 - `MultipleMatchBehavior`
 - `NoMatchBehavior`
+- `ArchiveGmailAfterClassification`
 
 Le MVP utilise `MarkAsConflict` pour plusieurs projets et `Ignore` lorsqu’aucun
-projet n’est détecté.
+projet n’est détecté. L’archivage Gmail après classement est désactivé par
+défaut et configurable par organisation.
 
 ## Project
 

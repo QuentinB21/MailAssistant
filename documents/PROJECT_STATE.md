@@ -8,13 +8,13 @@ chaque session significative. La vision et le découpage sont dans
 
 ## État global
 
-- Phase actuelle : construction de l’interface métier.
-- Itération active : itération 3 — interface projets et paramètres.
-- Dernière itération terminée : itération 2 — identité et autorisations.
-- Statut du MVP : cœur métier sécurisé, interface fonctionnelle à construire.
+- Phase actuelle : intégration du premier fournisseur de messagerie.
+- Itération active : itération 4 — connexion Gmail et classement manuel.
+- Dernière itération terminée : itération 3 — interface projets et paramètres.
+- Statut du MVP : cœur métier sécurisé et utilisable depuis l’interface.
 - Dépôt Git : branche `main` reliée à `origin/main`.
-- Code applicatif : API CRUD projets/alias, matching, worker et frontend présents.
-- Tests : 27 tests .NET et 2 tests Vitest validés.
+- Code applicatif : API métier sécurisée, worker et interface de gestion présents.
+- Tests : 29 tests .NET et 4 tests Vitest validés.
 - Infrastructure locale : PostgreSQL, RabbitMQ et Keycloak validés avec Docker
   Compose.
 
@@ -65,18 +65,27 @@ chaque session significative. La vision et le découpage sont dans
 - [x] Formalisation explicite de la hiérarchie des rôles.
 - [x] Normalisation des emails pour une recherche stable.
 - [x] Mise en place d’une revue qualité après chaque groupe de trois itérations.
+- [x] Création du shell applicatif et du tableau de bord par organisation.
+- [x] Gestion complète des projets et alias depuis l’interface.
+- [x] Ajout du banc d’essai de matching avec explication du résultat.
+- [x] Ajout et persistance des paramètres de classement par organisation.
+- [x] Centralisation des appels API typés et des erreurs frontend.
+- [x] Validation du parcours UI réel avec Keycloak, PostgreSQL et l’API.
+- [x] Compatibilité locale avec `localhost` et `127.0.0.1`.
+- [x] Conteneurisation du frontend, de l’API et du Worker.
+- [x] Démarrage autonome de toute la stack avec `docker compose up`.
 
 ## Prochaine étape recommandée
 
-Exécuter l’itération 3 dans cet ordre :
+Préparer puis exécuter l’itération 4 dans cet ordre :
 
-1. Créer le shell authentifié et la sélection d’organisation.
-2. Créer les pages liste, création et modification de projet.
-3. Ajouter la gestion des alias et de leur activation.
-4. Ajouter le formulaire de test manuel d’un sujet.
-5. Afficher les permissions selon le rôle courant.
-6. Centraliser les appels API typés et les erreurs.
-7. Ajouter les tests UI des parcours critiques.
+1. Valider les choix de rattachement et d’administration des comptes Gmail.
+2. Créer le projet Google Cloud et les identifiants OAuth de développement.
+3. Définir le mécanisme de chiffrement local et de production des tokens.
+4. Modéliser les comptes, credentials et cibles de classement Gmail.
+5. Implémenter OAuth, renouvellement, révocation et déconnexion.
+6. Ajouter le classement manuel idempotent d’un message de test.
+7. Ajouter les tests d’intégration et le parcours UI correspondant.
 
 ## Décisions provisoires
 
@@ -115,7 +124,7 @@ Lorsqu’une décision devient stable, créer un fichier dans
 
 ## Bloquants
 
-Aucun bloquant pour démarrer l’itération 3.
+Aucun bloquant dans le code pour démarrer l’itération 4.
 
 Node.js 22.23.1 est installé via WinGet. Les terminaux ouverts avant
 l’installation doivent être redémarrés pour récupérer le nouveau `PATH`.
@@ -127,6 +136,9 @@ Les intégrations réelles demanderont ultérieurement :
 - des comptes Gmail et Microsoft 365 de test ;
 - une URL HTTPS publiquement accessible pour tester les webhooks ;
 - les choix de rétention et de cible de déploiement.
+
+L’itération 4 demande dès son démarrage un projet Google Cloud, un compte Gmail
+de test et une URL de callback OAuth explicitement autorisée.
 
 ## Journal des sessions
 
@@ -225,6 +237,31 @@ Les intégrations réelles demanderont ultérieurement :
   de fonctionnalités augmentera ; les versions majeures React 19/TypeScript 6
   ne sont pas introduites pendant une passe sans changement fonctionnel.
 - Prochaine action exacte : démarrer l’itération 3 sur le socle nettoyé.
+
+### 2026-06-24 — itération 3
+
+- Itération : 3 — interface projets et paramètres.
+- Objectif : rendre le cœur métier utilisable avant les intégrations externes.
+- Réalisé : shell responsive, tableau de bord, sélection d’organisation,
+  gestion des projets et alias, test de matching explicable, paramètres de
+  classement persistés et client API TypeScript typé.
+- Backend : endpoints de lecture et mise à jour des paramètres, repository EF
+  Core, migration d’archivage Gmail et contexte utilisateur explicite du worker.
+- Tests exécutés : build .NET sans avertissement, 29 tests xUnit, 4 tests
+  Vitest, lint, formatage, migration cohérente, build frontend, audit npm,
+  scénario d’authentification et test de démarrage complet.
+- Parcours réel : connexion Keycloak, création du projet `UI Orion 0624`,
+  ajout de l’alias `ORION-UI`, matching positif et sauvegarde de l’archivage
+  Gmail.
+- Robustesse locale : Keycloak, le frontend et l’API acceptent `localhost` et
+  `127.0.0.1`.
+- Exploitation locale : frontend Nginx, API et Worker disposent de leurs images
+  Docker ; les migrations sont appliquées automatiquement au démarrage de
+  l’API et les services attendent leurs dépendances via des healthchecks.
+- Risques ou dettes : le client TypeScript est maintenu manuellement ; une
+  génération OpenAPI pourra le remplacer lorsque le contrat API se stabilisera.
+- Prochaine action exacte : cadrer les credentials Google Cloud et commencer
+  l’itération 4 par le modèle de comptes Gmail et la protection des tokens.
 
 ## Modèle de mise à jour pour la prochaine session
 

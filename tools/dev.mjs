@@ -1,6 +1,13 @@
 import { run, start, stop, waitForHttp } from "./process.mjs";
 
-run("docker", ["compose", "up", "-d"]);
+run("docker", [
+  "compose",
+  "up",
+  "-d",
+  "postgres",
+  "rabbitmq",
+  "keycloak",
+]);
 run("dotnet", ["tool", "restore"]);
 run("dotnet", [
   "ef",

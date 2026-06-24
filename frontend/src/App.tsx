@@ -1,4 +1,5 @@
 import type { AuthSession } from "./auth/auth";
+import { Workspace } from "./components/Workspace";
 
 interface AppProps {
   session: AuthSession;
@@ -29,17 +30,6 @@ export function App({ session }: AppProps) {
   }
 
   return (
-    <main className="app-shell">
-      <section className="hero" aria-labelledby="page-title">
-        <p className="eyebrow">Session sécurisée</p>
-        <h1 id="page-title">MailAssistant</h1>
-        <p>
-          Connecté en tant que {session.displayName ?? "utilisateur"}.
-        </p>
-        <button className="secondary-action" type="button" onClick={session.logout}>
-          Se déconnecter
-        </button>
-      </section>
-    </main>
+    <Workspace session={session} />
   );
 }

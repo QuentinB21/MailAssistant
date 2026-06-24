@@ -16,6 +16,9 @@ public static class AuthenticationExtensions
         var audience = configuration["Authentication:Audience"]
             ?? throw new InvalidOperationException(
                 "Authentication audience is not configured.");
+        var validIssuers = configuration
+            .GetSection("Authentication:ValidIssuers")
+            .Get<string[]>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, HttpCurrentUser>();
@@ -32,6 +35,7 @@ public static class AuthenticationExtensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
+                    ValidIssuers = validIssuers,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,

@@ -3,7 +3,7 @@
 Application web multi-tenant qui classe automatiquement les emails Gmail et
 Microsoft 365 selon les projets détectés dans leur sujet.
 
-Le projet entre dans l’itération 3. La feuille de route et l’état courant sont
+Le projet entre dans l’itération 4. La feuille de route et l’état courant sont
 disponibles dans :
 
 - [`documents/ROADMAP.md`](documents/ROADMAP.md)
@@ -11,27 +11,32 @@ disponibles dans :
 
 ## Prérequis
 
-- .NET SDK 10.0.100 ou correctif compatible ;
-- Node.js 22.12 ou plus récent ;
 - Docker avec Docker Compose.
 
-Les versions structurantes sont verrouillées par `global.json`, `.nvmrc` et les
-fichiers de packages.
+.NET et Node.js ne sont nécessaires sur la machine hôte que pour le
+développement hors Docker. Les images de la stack fournissent leurs propres
+runtimes.
 
 ## Démarrage local
 
-Installer les dépendances frontend une première fois :
+Démarrer toute la stack :
 
 ```shell
-npm ci --prefix frontend
+docker compose up
 ```
 
-Puis démarrer l’infrastructure, appliquer les migrations et lancer l’API, le
-worker et le frontend :
+Au premier lancement, Docker construit automatiquement les images. Après une
+modification du code, forcer leur reconstruction avec :
 
 ```shell
-npm run dev
+docker compose up --build
 ```
+
+La stack contient le frontend Nginx, l’API .NET, le Worker .NET, PostgreSQL,
+RabbitMQ et Keycloak. L’API applique automatiquement les migrations avant de
+démarrer.
+
+Ouvrir ensuite l’application sur <http://localhost:5173>.
 
 Services exposés :
 
@@ -42,30 +47,33 @@ Services exposés :
 - RabbitMQ Management : <http://localhost:15672>
 - PostgreSQL : `localhost:5432`
 
-Arrêter l’application avec `Ctrl+C`. Pour arrêter aussi l’infrastructure :
+Arrêter les conteneurs :
 
 ```shell
-npm run infra:down
+docker compose down
 ```
 
 ## Commandes principales
 
 ```shell
+# Stack complète reconstruite
+docker compose up --build
+
+# Logs de tous les services
+docker compose logs --follow
+
+# Développement local avec rechargement à chaud
+npm run dev:local
+
 # Validation complète backend, frontend et Docker Compose
 npm run verify
 
 # Scénario réel Keycloak/PostgreSQL/API
 npm run test:auth
-
-# Infrastructure uniquement
-npm run infra:up
-
-# Application des migrations
-npm run db:update
 ```
 
-Ces commandes sont pilotées par Node.js et fonctionnent sous Windows, Linux et
-macOS. Elles sont également utilisées par la CI lorsque pertinent.
+Les commandes `npm` sont réservées au développement et à la CI. L’exécution
+normale de l’application ne dépend que de Docker Compose.
 
 ## Authentification locale
 
@@ -81,6 +89,7 @@ Toutes les routes métier nécessitent un JWT Keycloak valide :
 - CRUD `/api/organizations/{organizationId}/projects`
 - CRUD `/api/organizations/{organizationId}/projects/{projectId}/aliases`
 - `POST /api/organizations/{organizationId}/matching-tests`
+- paramètres `/api/organizations/{organizationId}/settings`
 - gestion `/api/organizations/{organizationId}/members`
 
 ## Structure

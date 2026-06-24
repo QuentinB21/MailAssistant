@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import type { AuthSession } from "./auth/auth";
 
@@ -7,17 +7,70 @@ const session: AuthSession = {
   initialized: true,
   authenticated: true,
   displayName: "Quentin",
-  login: async () => undefined,
-  logout: async () => undefined,
-  getAccessToken: async () => "test-token",
+  login: vi.fn(async () => undefined),
+  logout: vi.fn(async () => undefined),
+  getAccessToken: vi.fn(async () => "test-token"),
 };
 
+const jsonResponse = (body: unknown) =>
+  Promise.resolve(
+    new Response(JSON.stringify(body), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }),
+  );
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  window.localStorage.clear();
+});
+
 describe("App", () => {
-  it("affiche le nom du produit", () => {
+  it("affiche l’espace authentifié et son tableau de bord", async () => {
+    vi.spyOn(globalThis, "fetch")
+      .mockImplementationOnce(() =>
+        jsonResponse([
+          {
+            id: "org-1",
+            name: "Acme",
+            role: "Owner",
+            createdAt: "2026-06-24T00:00:00Z",
+            updatedAt: "2026-06-24T00:00:00Z",
+          },
+        ]),
+      )
+      .mockImplementationOnce(() =>
+        jsonResponse([
+          {
+            id: "project-1",
+            organizationId: "org-1",
+            name: "Apollo",
+            description: null,
+            isActive: true,
+            classificationTargetName: "Apollo",
+            createdAt: "2026-06-24T00:00:00Z",
+            updatedAt: "2026-06-24T00:00:00Z",
+            aliases: [],
+          },
+        ]),
+      );
+
+    render(<App session={session} />);
+
+    expect(await screen.findByText("MailAssistant")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Acme" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("1 projet(s) configuré(s)")).toBeInTheDocument();
+  });
+
+  it("propose la création d’une organisation pour un nouveau compte", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementationOnce(() => jsonResponse([]));
+
     render(<App session={session} />);
 
     expect(
-      screen.getByRole("heading", { name: "MailAssistant" }),
+      await screen.findByRole("heading", { name: "Créez votre organisation" }),
     ).toBeInTheDocument();
   });
 

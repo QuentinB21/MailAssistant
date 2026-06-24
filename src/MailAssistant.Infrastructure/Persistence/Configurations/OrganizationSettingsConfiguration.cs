@@ -19,6 +19,8 @@ internal sealed class OrganizationSettingsConfiguration
             .HasConversion<string>()
             .HasMaxLength(50)
             .IsRequired();
+        builder.Property(settings => settings.ArchiveGmailAfterClassification)
+            .IsRequired();
 
         builder.HasOne<Organization>()
             .WithOne()

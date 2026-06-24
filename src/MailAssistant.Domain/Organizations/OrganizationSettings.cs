@@ -20,6 +20,8 @@ public sealed class OrganizationSettings
 
     public NoMatchBehavior NoMatchBehavior { get; private set; } = NoMatchBehavior.Ignore;
 
+    public bool ArchiveGmailAfterClassification { get; private set; }
+
     public static OrganizationSettings Create(Guid organizationId)
     {
         ArgumentOutOfRangeException.ThrowIfEqual(organizationId, Guid.Empty);
@@ -28,9 +30,11 @@ public sealed class OrganizationSettings
 
     public void Update(
         MultipleMatchBehavior multipleMatchBehavior,
-        NoMatchBehavior noMatchBehavior)
+        NoMatchBehavior noMatchBehavior,
+        bool archiveGmailAfterClassification)
     {
         MultipleMatchBehavior = multipleMatchBehavior;
         NoMatchBehavior = noMatchBehavior;
+        ArchiveGmailAfterClassification = archiveGmailAfterClassification;
     }
 }

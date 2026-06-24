@@ -67,8 +67,62 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  api:
+    build:
+      context: .
+      dockerfile: src/MailAssistant.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Database: Host=postgres;Port=5432;Database=${POSTGRES_DB:-mailassistant};Username=${POSTGRES_USER:-mailassistant};Password=${POSTGRES_PASSWORD:-local-development-only}
+      Authentication__Authority: http://keycloak:8080/realms/mailassistant
+      Authentication__Audience: mailassistant-api
+      Authentication__ValidIssuers__0: http://localhost:8080/realms/mailassistant
+      Authentication__ValidIssuers__1: http://127.0.0.1:8080/realms/mailassistant
+      Authentication__RequireHttpsMetadata: "false"
+      Frontend__Origins__0: http://localhost:5173
+      Frontend__Origins__1: http://127.0.0.1:5173
+    ports:
+      - "${API_PORT:-5080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: src/MailAssistant.Worker/Dockerfile
+    environment:
+      ConnectionStrings__Database: Host=postgres;Port=5432;Database=${POSTGRES_DB:-mailassistant};Username=${POSTGRES_USER:-mailassistant};Password=${POSTGRES_PASSWORD:-local-development-only}
+    depends_on:
+      api:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   postgres-data:
   rabbitmq-data:
   keycloak-data:
-

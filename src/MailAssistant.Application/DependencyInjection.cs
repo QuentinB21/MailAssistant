@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddSingleton<IMatchingStrategy, ContainsSubjectMatchingStrategy>();
         services.AddSingleton<IConflictResolutionPolicy, ConflictResolutionPolicy>();
         services.AddScoped<OrganizationService>();
+        services.AddScoped<OrganizationSettingsService>();
         services.AddScoped<ProjectService>();
         services.AddScoped<SubjectMatchingService>();
         services.AddScoped<CurrentUserService>();

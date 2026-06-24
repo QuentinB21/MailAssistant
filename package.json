@@ -6,12 +6,14 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "node tools/dev.mjs",
+    "dev": "docker compose up --build",
+    "dev:local": "node tools/dev.mjs",
     "dev:smoke": "node tools/dev.mjs --smoke",
     "verify": "node tools/verify.mjs",
     "test:auth": "node tools/test-auth.mjs",
-    "infra:up": "docker compose up -d",
-    "infra:down": "docker compose down",
+    "compose:up": "docker compose up --build",
+    "compose:down": "docker compose down",
+    "compose:logs": "docker compose logs --follow",
     "db:update": "dotnet ef database update --project src/MailAssistant.Infrastructure --startup-project src/MailAssistant.Api"
   }
 }
