@@ -12,6 +12,20 @@ permissions:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.8-alpine
+        env:
+          POSTGRES_DB: mailassistant
+          POSTGRES_USER: mailassistant
+          POSTGRES_PASSWORD: local-development-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mailassistant -d mailassistant"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -20,6 +34,9 @@ jobs:
       - run: dotnet restore MailAssistant.sln
       - run: dotnet build MailAssistant.sln --no-restore --configuration Release
       - run: dotnet test MailAssistant.sln --no-build --configuration Release
+      - run: dotnet tool restore
+      - run: dotnet ef migrations has-pending-model-changes --no-build --configuration Release --project src/MailAssistant.Infrastructure --startup-project src/MailAssistant.Api
+      - run: dotnet ef database update --no-build --configuration Release --project src/MailAssistant.Infrastructure --startup-project src/MailAssistant.Api
 
   frontend:
     runs-on: ubuntu-latest

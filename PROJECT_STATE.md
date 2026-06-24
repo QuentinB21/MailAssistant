@@ -8,13 +8,13 @@ chaque session significative. La vision et le découpage sont dans
 
 ## État global
 
-- Phase actuelle : développement du cœur métier.
-- Itération active : itération 1 — domaine, persistance et moteur de matching.
-- Dernière itération terminée : itération 0 — fondations et décisions.
-- Statut du MVP : socle technique terminé, fonctionnalités métier à réaliser.
-- Dépôt Git : initialisé sur la branche `main`, aucun commit créé.
-- Code applicatif : squelettes API, worker et frontend présents.
-- Tests : socles xUnit et Vitest présents et validés.
+- Phase actuelle : sécurisation de l’application.
+- Itération active : itération 2 — identité, organisations et autorisations.
+- Dernière itération terminée : itération 1 — domaine, persistance et matching.
+- Statut du MVP : cœur métier et persistance opérationnels, authentification à réaliser.
+- Dépôt Git : branche `main` reliée à `origin/main`.
+- Code applicatif : API CRUD projets/alias, matching, worker et frontend présents.
+- Tests : 16 tests .NET et 1 test Vitest validés.
 - Infrastructure locale : PostgreSQL, RabbitMQ et Keycloak validés avec Docker
   Compose.
 
@@ -36,17 +36,29 @@ chaque session significative. La vision et le découpage sont dans
 - [x] Validation du build, des tests, du lint et de l’audit des dépendances.
 - [x] Validation des trois conteneurs Docker à l’état `healthy`.
 - [x] Validation de l’endpoint API `/health` et du démarrage du worker.
+- [x] Modélisation des organisations, réglages, projets et alias.
+- [x] Ajout d’EF Core 10 et du provider PostgreSQL.
+- [x] Création et application de la migration initiale.
+- [x] Implémentation des repositories et de l’unité de travail.
+- [x] Implémentation de la normalisation des sujets.
+- [x] Implémentation de la stratégie de matching déterministe.
+- [x] Implémentation de la politique de conflit sans action.
+- [x] Exposition des API CRUD organisations, projets et alias.
+- [x] Exposition de l’API de test manuel d’un sujet.
+- [x] Validation du parcours API/PostgreSQL de bout en bout.
+- [x] Documentation du modèle de données et du moteur de matching.
 
 ## Prochaine étape recommandée
 
-Exécuter l’itération 1 dans cet ordre :
+Exécuter l’itération 2 dans cet ordre :
 
-1. Définir les entités `Organization`, `Project`, `ProjectAlias` et réglages.
-2. Ajouter EF Core et la première migration PostgreSQL.
-3. Définir les contrats du moteur de matching.
-4. Implémenter et tester la normalisation des sujets.
-5. Implémenter la stratégie déterministe et la politique de conflit.
-6. Exposer les premiers cas d’usage de projets et le test manuel d’un sujet.
+1. Configurer la validation JWT Keycloak dans l’API.
+2. Modéliser les utilisateurs locaux et appartenances aux organisations.
+3. Synchroniser l’utilisateur à sa première connexion.
+4. Implémenter les rôles `Owner`, `Admin` et `Member`.
+5. Remplacer la confiance dans `organizationId` par une autorisation tenant.
+6. Ajouter les tests négatifs d’isolation entre organisations.
+7. Brancher l’authentification React et protéger les routes.
 
 ## Décisions provisoires
 
@@ -57,9 +69,9 @@ propriétaire du projet :
 |---|---|---|
 | D-001 | Utiliser un monolithe modulaire avec API et worker séparés | Acceptée, ADR 0001 |
 | D-002 | Intégrer RabbitMQ dès le MVP | Acceptée, ADR 0002 |
-| D-003 | Porter les projets et règles au niveau organisation | Proposée |
-| D-004 | Classer un message dans un seul projet pour le MVP | Proposée |
-| D-005 | En cas de correspondances multiples, ne rien classer et tracer un conflit | Proposée |
+| D-003 | Porter les projets et règles au niveau organisation | Acceptée, ADR 0004 |
+| D-004 | Classer un message dans un seul projet pour le MVP | Acceptée, ADR 0004 |
+| D-005 | En cas de correspondances multiples, ne rien classer et tracer un conflit | Acceptée, ADR 0004 |
 | D-006 | Gmail ajoute un label sans archiver par défaut | Proposée |
 | D-007 | Générer un client TypeScript depuis OpenAPI | Proposée |
 | D-008 | Éviter de conserver le sujet brut dans l’historique | Proposée |
@@ -71,7 +83,7 @@ Lorsqu’une décision devient stable, créer un fichier dans
 
 ## Questions ouvertes
 
-- [ ] Les projets sont-ils exclusivement partagés par organisation ?
+- [x] Les projets sont exclusivement partagés par organisation.
 - [ ] Un utilisateur peut-il appartenir à plusieurs organisations ?
 - [ ] Qui peut connecter et administrer un compte mail ?
 - [ ] Faut-il autoriser plusieurs labels Gmail en cas de plusieurs matchs ?
@@ -83,13 +95,10 @@ Lorsqu’une décision devient stable, créer un fichier dans
 
 ## Bloquants
 
-Aucun bloquant pour démarrer l’itération 1.
+Aucun bloquant pour démarrer l’itération 2.
 
-Prérequis local restant : l’installation système actuelle de Node.js est en
-version 18.17.1. Elle doit être mise à niveau vers Node.js 22.12 ou supérieur
-pour utiliser directement `npm` et `scripts/verify.ps1`. Les validations de
-cette session ont utilisé le runtime Node.js 24.14 fourni par l’environnement
-Codex.
+Node.js 22.23.1 est installé via WinGet. Les terminaux ouverts avant
+l’installation doivent être redémarrés pour récupérer le nouveau `PATH`.
 
 Les intégrations réelles demanderont ultérieurement :
 
@@ -133,7 +142,29 @@ Les intégrations réelles demanderont ultérieurement :
 - Décision utilisateur : remplacer la cible .NET 8 par .NET 10.
 - SDK verrouillé : 10.0.100.
 - Framework cible : `net10.0`.
-- Packages `Microsoft.Extensions.*` alignés sur la version 10.0.0.
+- Packages `Microsoft.Extensions.*` alignés sur la version 10.0.9.
+
+### 2026-06-24 — itération 1
+
+- Itération : 1 — domaine, persistance et moteur de matching.
+- Objectif : livrer le cœur métier indépendamment de Gmail et Outlook.
+- Réalisé : organisations, réglages, projets, alias, EF Core/PostgreSQL,
+  migration initiale, repositories, CRUD REST et test manuel de sujet.
+- Matching : suppression des préfixes de réponse/transfert, casse, accents,
+  ponctuation et espaces ; correspondance sur limites de termes ; projets et
+  alias désactivés ignorés ; conflits sans action.
+- Tests exécutés : build .NET sans avertissement, 16 tests xUnit, migration
+  sans changement de modèle en attente, migration appliquée sur PostgreSQL,
+  parcours API réel `Matched` et `Conflict`, lint/test/build/audit frontend.
+- Décisions prises : projets par organisation, un seul projet sélectionnable,
+  conflit sans action automatique, ADR 0004.
+- Fichiers principaux : domaines `Organizations`, `Projects`, `Matching`,
+  services applicatifs, `MailAssistantDbContext`, migrations et endpoints API.
+- Risques ou dettes : les routes contiennent encore un `organizationId` fourni
+  par le client ; l’itération 2 doit impérativement vérifier l’appartenance via
+  Keycloak avant toute exposition réelle.
+- Prochaine action exacte : valider les JWT Keycloak et introduire les
+  appartenances utilisateur/organisation.
 
 ## Modèle de mise à jour pour la prochaine session
 

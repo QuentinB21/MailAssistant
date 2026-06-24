@@ -15,6 +15,12 @@ try {
     dotnet restore MailAssistant.sln
     dotnet build MailAssistant.sln --no-restore --configuration Release
     dotnet test MailAssistant.sln --no-build --configuration Release
+    dotnet tool restore
+    dotnet ef migrations has-pending-model-changes `
+        --no-build `
+        --configuration Release `
+        --project src/MailAssistant.Infrastructure `
+        --startup-project src/MailAssistant.Api
 
     Push-Location "frontend"
     try {

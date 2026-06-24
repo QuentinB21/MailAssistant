@@ -21,3 +21,6 @@ csharp_style_var_when_type_is_apparent = true:suggestion
 
 [*.md]
 trim_trailing_whitespace = false
+
+[**/Migrations/*.cs]
+generated_code = true

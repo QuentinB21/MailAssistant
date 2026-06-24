@@ -33,6 +33,15 @@ Démarrer PostgreSQL, RabbitMQ et Keycloak :
 docker compose up -d
 ```
 
+Appliquer les migrations PostgreSQL :
+
+```powershell
+dotnet tool restore
+dotnet ef database update `
+  --project src/MailAssistant.Infrastructure `
+  --startup-project src/MailAssistant.Api
+```
+
 Services exposés :
 
 - Keycloak : <http://localhost:8080>
@@ -64,6 +73,28 @@ npm run dev
 
 Le frontend répond sur <http://localhost:5173>.
 
+## API du cœur métier
+
+L’itération 1 expose les routes suivantes :
+
+- `POST /api/organizations`
+- `GET /api/organizations`
+- `GET /api/organizations/{organizationId}`
+- CRUD `/api/organizations/{organizationId}/projects`
+- CRUD `/api/organizations/{organizationId}/projects/{projectId}/aliases`
+- `POST /api/organizations/{organizationId}/matching-tests`
+
+Exemple de test manuel :
+
+```json
+{
+  "subject": "RE: Compte rendu Projet Apollo"
+}
+```
+
+Le résultat vaut `Matched`, `NoMatch` ou `Conflict`. En cas de conflit, aucune
+sélection automatique n’est effectuée.
+
 ## Vérification complète
 
 ```powershell
@@ -87,6 +118,10 @@ tests/                           tests automatisés .NET
 infrastructure/                  configuration locale reproductible
 docs/adr/                        décisions d’architecture
 ```
+
+Le modèle de données est documenté dans
+[`docs/data-model.md`](docs/data-model.md) et le moteur dans
+[`docs/matching.md`](docs/matching.md).
 
 ## Configuration et secrets
 

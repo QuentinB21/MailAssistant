@@ -16,7 +16,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/MailAssistant.Application/MailAssistant.Application.csproj" />
     <ProjectReference Include="../../src/MailAssistant.Domain/MailAssistant.Domain.csproj" />
   </ItemGroup>
 </Project>
-
