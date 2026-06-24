@@ -21,4 +21,3 @@ séparé réutilise les mêmes modules applicatifs pour les traitements RabbitMQ
 - Le déploiement demeure simple pour le MVP.
 - L’API et le worker peuvent évoluer et être dimensionnés séparément.
 - Une extraction future reste possible si un besoin mesuré la justifie.
-

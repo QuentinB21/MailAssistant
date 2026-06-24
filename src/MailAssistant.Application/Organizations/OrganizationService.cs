@@ -18,21 +18,9 @@ public sealed class OrganizationService(
     {
         var user = await currentUserService.GetOrCreateAsync(cancellationToken);
         var results = await organizations.ListForUserAsync(user.Id, cancellationToken);
-        var responses = new List<OrganizationResponse>(results.Count);
-
-        foreach (var organization in results)
-        {
-            var membership = await memberships.GetAsync(
-                organization.Id,
-                user.Id,
-                cancellationToken);
-            responses.Add(Map(
-                organization,
-                membership?.Role
-                    ?? throw new InvalidOperationException("Membership is missing.")));
-        }
-
-        return responses;
+        return results
+            .Select(result => Map(result.Organization, result.Role))
+            .ToArray();
     }
 
     public async Task<OrganizationResponse> GetAsync(

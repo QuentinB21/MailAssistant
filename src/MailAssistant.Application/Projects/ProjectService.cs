@@ -1,19 +1,14 @@
 using MailAssistant.Application.Abstractions;
 using MailAssistant.Application.Identity;
 using MailAssistant.Domain.Identity;
-using MailAssistant.Domain.Matching;
 using MailAssistant.Domain.Projects;
 
 namespace MailAssistant.Application.Projects;
 
 public sealed class ProjectService(
-    IOrganizationRepository organizations,
     IProjectRepository projects,
     OrganizationAccessService access,
     IUnitOfWork unitOfWork,
-    ISubjectNormalizer subjectNormalizer,
-    IMatchingStrategy matchingStrategy,
-    IConflictResolutionPolicy conflictResolutionPolicy,
     TimeProvider timeProvider)
 {
     public async Task<IReadOnlyCollection<ProjectResponse>> ListAsync(
@@ -24,7 +19,6 @@ public sealed class ProjectService(
             organizationId,
             OrganizationRole.Member,
             cancellationToken);
-        await EnsureOrganizationExistsAsync(organizationId, cancellationToken);
         var results = await projects.ListAsync(organizationId, cancellationToken);
         return results.Select(Map).ToArray();
     }
@@ -51,7 +45,6 @@ public sealed class ProjectService(
             organizationId,
             OrganizationRole.Admin,
             cancellationToken);
-        await EnsureOrganizationExistsAsync(organizationId, cancellationToken);
         await EnsureProjectNameIsAvailableAsync(
             organizationId,
             command.Name,
@@ -163,57 +156,6 @@ public sealed class ProjectService(
         var project = await GetProjectAsync(organizationId, projectId, cancellationToken);
         project.RemoveAlias(aliasId, timeProvider.GetUtcNow());
         await unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task<MatchingTestResponse> TestSubjectAsync(
-        Guid organizationId,
-        string subject,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(subject);
-        await access.RequireAsync(
-            organizationId,
-            OrganizationRole.Member,
-            cancellationToken);
-        await EnsureOrganizationExistsAsync(organizationId, cancellationToken);
-
-        var organizationProjects = await projects.ListAsync(organizationId, cancellationToken);
-        var definitions = organizationProjects
-            .Select(project => new ProjectMatchDefinition(
-                project.Id,
-                project.Name,
-                project.IsActive,
-                project.Aliases
-                    .Select(alias => new ProjectAliasMatchDefinition(alias.Value, alias.IsActive))
-                    .ToArray()))
-            .ToArray();
-
-        var normalizedSubject = subjectNormalizer.Normalize(subject);
-        var matches = matchingStrategy.FindMatches(normalizedSubject, definitions);
-        var decision = conflictResolutionPolicy.Resolve(normalizedSubject, matches);
-
-        return new MatchingTestResponse(
-            decision.Outcome,
-            decision.NormalizedSubject,
-            decision.SelectedProjectId,
-            decision.Matches
-                .Select(match => new ProjectMatchResponse(
-                    match.ProjectId,
-                    match.ProjectName,
-                    match.MatchedValue,
-                    match.Source))
-                .ToArray());
-    }
-
-    private async Task EnsureOrganizationExistsAsync(
-        Guid organizationId,
-        CancellationToken cancellationToken)
-    {
-        if (organizationId == Guid.Empty
-            || await organizations.GetAsync(organizationId, cancellationToken) is null)
-        {
-            throw new KeyNotFoundException("Organization not found.");
-        }
     }
 
     private async Task<Project> GetProjectAsync(

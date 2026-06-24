@@ -1,153 +1,124 @@
 # MailAssistant
 
-Application de classement automatique des emails Gmail et Microsoft 365 selon
-les projets détectés dans leur sujet.
+Application web multi-tenant qui classe automatiquement les emails Gmail et
+Microsoft 365 selon les projets détectés dans leur sujet.
 
-Le projet est actuellement dans l’itération 0. La feuille de route est décrite
-dans [`ROADMAP.md`](ROADMAP.md) et l’état courant dans
-[`PROJECT_STATE.md`](PROJECT_STATE.md).
+Le projet entre dans l’itération 3. La feuille de route et l’état courant sont
+disponibles dans :
+
+- [`documents/ROADMAP.md`](documents/ROADMAP.md)
+- [`documents/PROJECT_STATE.md`](documents/PROJECT_STATE.md)
 
 ## Prérequis
 
-- .NET SDK 10.0.100 ou version corrective compatible ;
+- .NET SDK 10.0.100 ou correctif compatible ;
 - Node.js 22.12 ou plus récent ;
-- Docker avec Docker Compose ;
-- PowerShell pour le script de vérification fourni.
+- Docker avec Docker Compose.
 
-Les versions de SDK et de dépendances sont verrouillées dans le dépôt.
+Les versions structurantes sont verrouillées par `global.json`, `.nvmrc` et les
+fichiers de packages.
 
 ## Démarrage local
 
-Copier la configuration locale :
+Installer les dépendances frontend une première fois :
 
-```powershell
-Copy-Item .env.example .env
+```shell
+npm ci --prefix frontend
 ```
 
-Les valeurs par défaut sont uniquement destinées au développement local. Ne
-jamais les réutiliser en production.
+Puis démarrer l’infrastructure, appliquer les migrations et lancer l’API, le
+worker et le frontend :
 
-Démarrer PostgreSQL, RabbitMQ et Keycloak :
-
-```powershell
-docker compose up -d
-```
-
-Appliquer les migrations PostgreSQL :
-
-```powershell
-dotnet tool restore
-dotnet ef database update `
-  --project src/MailAssistant.Infrastructure `
-  --startup-project src/MailAssistant.Api
+```shell
+npm run dev
 ```
 
 Services exposés :
 
+- application : <http://localhost:5173>
+- API : <http://localhost:5080>
+- santé API : <http://localhost:5080/health>
 - Keycloak : <http://localhost:8080>
 - RabbitMQ Management : <http://localhost:15672>
 - PostgreSQL : `localhost:5432`
 
-Démarrer l’API :
+Arrêter l’application avec `Ctrl+C`. Pour arrêter aussi l’infrastructure :
 
-```powershell
-dotnet run --project src/MailAssistant.Api
+```shell
+npm run infra:down
 ```
 
-L’API répond sur <http://localhost:5080> et son endpoint de santé sur
-<http://localhost:5080/health>.
+## Commandes principales
 
-Démarrer le worker dans un second terminal :
+```shell
+# Validation complète backend, frontend et Docker Compose
+npm run verify
 
-```powershell
-dotnet run --project src/MailAssistant.Worker
+# Scénario réel Keycloak/PostgreSQL/API
+npm run test:auth
+
+# Infrastructure uniquement
+npm run infra:up
+
+# Application des migrations
+npm run db:update
 ```
 
-Démarrer le frontend :
+Ces commandes sont pilotées par Node.js et fonctionnent sous Windows, Linux et
+macOS. Elles sont également utilisées par la CI lorsque pertinent.
 
-```powershell
-Set-Location frontend
-npm ci
-npm run dev
-```
+## Authentification locale
 
-Le frontend répond sur <http://localhost:5173>.
+La connexion utilise le realm Keycloak `mailassistant`. Les comptes locaux,
+les rôles et la séparation entre administration Keycloak et utilisateurs
+applicatifs sont documentés dans
+[`documents/authentication.md`](documents/authentication.md).
 
-La connexion utilise le realm Keycloak `mailassistant`. Les comptes de test et
-leur portée sont documentés dans
-[`docs/authentication.md`](docs/authentication.md).
+Toutes les routes métier nécessitent un JWT Keycloak valide :
 
-Pour vérifier les autorisations avec de vrais jetons :
-
-```powershell
-./scripts/test-auth.ps1
-```
-
-## API du cœur métier
-
-L’itération 1 expose les routes suivantes :
-
-- `POST /api/organizations`
-- `GET /api/organizations`
-- `GET /api/organizations/{organizationId}`
+- `GET /api/me`
+- CRUD `/api/organizations`
 - CRUD `/api/organizations/{organizationId}/projects`
 - CRUD `/api/organizations/{organizationId}/projects/{projectId}/aliases`
 - `POST /api/organizations/{organizationId}/matching-tests`
-- `GET /api/me`
-- `GET /api/organizations/{organizationId}/members`
-- `PUT /api/organizations/{organizationId}/members/by-email`
-
-Toutes ces routes nécessitent désormais un jeton Keycloak valide.
-
-Exemple de test manuel :
-
-```json
-{
-  "subject": "RE: Compte rendu Projet Apollo"
-}
-```
-
-Le résultat vaut `Matched`, `NoMatch` ou `Conflict`. En cas de conflit, aucune
-sélection automatique n’est effectuée.
-
-## Vérification complète
-
-```powershell
-./scripts/verify.ps1
-```
-
-Ce script restaure, compile et teste le backend, puis vérifie le lint, les
-tests et le build frontend ainsi que la syntaxe Docker Compose.
+- gestion `/api/organizations/{organizationId}/members`
 
 ## Structure
 
 ```text
 src/
-  MailAssistant.Api/             API REST et webhooks
-  MailAssistant.Application/     cas d’usage et orchestration
+  MailAssistant.Api/             API REST et authentification
+  MailAssistant.Application/     cas d’usage et autorisations
   MailAssistant.Domain/          modèle et règles métier
-  MailAssistant.Infrastructure/  persistance et fournisseurs externes
+  MailAssistant.Infrastructure/  PostgreSQL et intégrations externes
   MailAssistant.Worker/          traitements asynchrones
 frontend/                        application React TypeScript
 tests/                           tests automatisés .NET
 infrastructure/                  configuration locale reproductible
-docs/adr/                        décisions d’architecture
+documents/                       spécifications, suivi, guides et ADR
+tools/                           orchestration multiplateforme
 ```
 
-Le modèle de données est documenté dans
-[`docs/data-model.md`](docs/data-model.md) et le moteur dans
-[`docs/matching.md`](docs/matching.md).
+Documentation complémentaire :
+
+- [`documents/data-model.md`](documents/data-model.md)
+- [`documents/matching.md`](documents/matching.md)
+- [`documents/quality-review.md`](documents/quality-review.md)
+- [`documents/adr`](documents/adr)
 
 ## Configuration et secrets
 
-- `.env.example` documente les variables locales.
-- `.env` est ignoré par Git.
-- Aucun token OAuth ou secret réel ne doit être ajouté au dépôt.
-- Le realm Keycloak fourni ne contient ni utilisateur ni mot de passe métier.
+- `.env.example` et `frontend/.env.example` documentent les variables.
+- Les valeurs par défaut sont strictement locales.
+- Aucun token OAuth ou secret réel ne doit être versionné.
+- Les comptes et mots de passe du realm importé sont des données de test
+  publiques, interdites en production.
 
 ## Conventions
 
 - Branches courtes depuis `main`.
-- Une fonctionnalité inclut ses tests et sa documentation.
-- Les décisions durables sont enregistrées dans `docs/adr`.
-- `PROJECT_STATE.md` est mis à jour à chaque session significative.
+- Une fonctionnalité inclut code, tests et documentation.
+- Les décisions durables sont enregistrées dans `documents/adr`.
+- `documents/PROJECT_STATE.md` est mis à jour à chaque session significative.
+- Une revue cleanup/refactoring est planifiée après chaque groupe de trois
+  itérations.

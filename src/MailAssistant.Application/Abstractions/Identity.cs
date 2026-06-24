@@ -2,6 +2,10 @@ using MailAssistant.Domain.Identity;
 
 namespace MailAssistant.Application.Abstractions;
 
+public sealed record MembershipDetails(
+    OrganizationMembership Membership,
+    ApplicationUser User);
+
 public interface ICurrentUser
 {
     bool IsAuthenticated { get; }
@@ -35,7 +39,7 @@ public interface IMembershipRepository
         Guid userId,
         CancellationToken cancellationToken);
 
-    Task<IReadOnlyCollection<OrganizationMembership>> ListForOrganizationAsync(
+    Task<IReadOnlyCollection<MembershipDetails>> ListForOrganizationAsync(
         Guid organizationId,
         CancellationToken cancellationToken);
 

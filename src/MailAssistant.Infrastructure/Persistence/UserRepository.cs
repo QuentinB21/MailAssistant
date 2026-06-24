@@ -19,8 +19,10 @@ internal sealed class UserRepository(MailAssistantDbContext dbContext) : IUserRe
         string email,
         CancellationToken cancellationToken)
     {
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+
         return dbContext.Users.SingleOrDefaultAsync(
-            user => user.Email != null && EF.Functions.ILike(user.Email, email),
+            user => user.Email == normalizedEmail,
             cancellationToken);
     }
 

@@ -18,15 +18,17 @@ internal sealed class MembershipRepository(MailAssistantDbContext dbContext)
             cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<OrganizationMembership>> ListForOrganizationAsync(
+    public async Task<IReadOnlyCollection<MembershipDetails>> ListForOrganizationAsync(
         Guid organizationId,
         CancellationToken cancellationToken)
     {
-        return await dbContext.OrganizationMemberships
-            .AsNoTracking()
-            .Where(membership => membership.OrganizationId == organizationId)
-            .OrderByDescending(membership => membership.Role)
-            .ThenBy(membership => membership.CreatedAt)
+        return await (
+            from membership in dbContext.OrganizationMemberships.AsNoTracking()
+            join user in dbContext.Users.AsNoTracking()
+                on membership.UserId equals user.Id
+            where membership.OrganizationId == organizationId
+            orderby membership.Role descending, membership.CreatedAt
+            select new MembershipDetails(membership, user))
             .ToArrayAsync(cancellationToken);
     }
 

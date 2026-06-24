@@ -72,8 +72,8 @@ conserve le token uniquement en mémoire. Aucun token n’est écrit dans
 
 Avec Docker actif :
 
-```powershell
-./scripts/test-auth.ps1
+```shell
+npm run test:auth
 ```
 
 Le script vérifie les réponses 401/403 et les droits Owner/Admin/Member sur un

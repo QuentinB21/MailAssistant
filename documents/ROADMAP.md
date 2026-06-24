@@ -367,9 +367,16 @@ Critères de sortie :
 
 Au début de chaque itération :
 
-1. Lire `cahier_des_charges.md`, `ROADMAP.md` et `PROJECT_STATE.md`.
+1. Lire `documents/cahier_des_charges.md`, `documents/ROADMAP.md` et
+   `documents/PROJECT_STATE.md`.
 2. Vérifier l’état réel du dépôt et des tests.
 3. Choisir une seule itération active et ses critères de sortie.
-4. Mettre à jour `PROJECT_STATE.md` avant et après le travail.
+4. Mettre à jour `documents/PROJECT_STATE.md` avant et après le travail.
 5. Enregistrer les décisions durables dans un ADR.
 6. Ne marquer une tâche terminée qu’après code, tests et documentation.
+
+## 9. Revues périodiques de qualité
+
+Une passe de cleanup/refactoring est réalisée après chaque groupe de trois
+itérations : après 0–2, 3–5, 6–8, puis avant livraison. La checklist de
+référence est dans `documents/quality-review.md`.

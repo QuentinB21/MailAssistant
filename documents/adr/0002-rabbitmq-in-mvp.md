@@ -19,4 +19,3 @@ techniques nécessaires, jamais le contenu complet d’un email.
 - Les webhooks restent courts et fiables.
 - Retries et dead-letter queues pourront être ajoutés au worker.
 - Une dépendance opérationnelle supplémentaire est assumée et supervisée.
-

@@ -80,6 +80,8 @@ public sealed class ApplicationUser
             throw new ArgumentException("Email cannot exceed 320 characters.", nameof(email));
         }
 
-        return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
+        return string.IsNullOrWhiteSpace(trimmed)
+            ? null
+            : trimmed.ToLowerInvariant();
     }
 }

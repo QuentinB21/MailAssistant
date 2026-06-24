@@ -7,7 +7,7 @@ namespace MailAssistant.Infrastructure.Persistence;
 internal sealed class OrganizationRepository(MailAssistantDbContext dbContext)
     : IOrganizationRepository
 {
-    public async Task<IReadOnlyCollection<Organization>> ListForUserAsync(
+    public async Task<IReadOnlyCollection<OrganizationAccessRecord>> ListForUserAsync(
         Guid userId,
         CancellationToken cancellationToken)
     {
@@ -17,7 +17,7 @@ internal sealed class OrganizationRepository(MailAssistantDbContext dbContext)
                 on organization.Id equals membership.OrganizationId
             where membership.UserId == userId
             orderby organization.Name
-            select organization)
+            select new OrganizationAccessRecord(organization, membership.Role))
             .ToArrayAsync(cancellationToken);
     }
 

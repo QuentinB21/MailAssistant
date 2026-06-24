@@ -1,0 +1,17 @@
+{
+  "name": "mailassistant",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node tools/dev.mjs",
+    "dev:smoke": "node tools/dev.mjs --smoke",
+    "verify": "node tools/verify.mjs",
+    "test:auth": "node tools/test-auth.mjs",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "db:update": "dotnet ef database update --project src/MailAssistant.Infrastructure --startup-project src/MailAssistant.Api"
+  }
+}

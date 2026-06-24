@@ -24,15 +24,9 @@ public sealed class MembershipService(
             organizationId,
             cancellationToken);
 
-        var responses = new List<MembershipResponse>(results.Count);
-        foreach (var membership in results)
-        {
-            var user = await users.GetAsync(membership.UserId, cancellationToken)
-                ?? throw new InvalidOperationException("Membership user is missing.");
-            responses.Add(Map(membership, user));
-        }
-
-        return responses;
+        return results
+            .Select(result => Map(result.Membership, result.User))
+            .ToArray();
     }
 
     public async Task<MembershipResponse> AddOrUpdateAsync(

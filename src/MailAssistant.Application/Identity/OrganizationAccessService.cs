@@ -24,7 +24,7 @@ public sealed class OrganizationAccessService(
             user.Id,
             cancellationToken);
 
-        if (membership is null || membership.Role < minimumRole)
+        if (membership is null || !membership.Role.HasAtLeast(minimumRole))
         {
             throw new AccessDeniedException(
                 "You do not have permission to access this organization.");

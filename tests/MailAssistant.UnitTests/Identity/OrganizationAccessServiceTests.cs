@@ -79,7 +79,7 @@ public sealed class OrganizationAccessServiceTests
 
         return new OrganizationAccessService(
             currentUserService,
-            new FakeMembershipRepository(membership));
+            new FakeMembershipRepository(user, membership));
     }
 
     private sealed class FakeCurrentUser(ApplicationUser user) : ICurrentUser
@@ -124,7 +124,9 @@ public sealed class OrganizationAccessServiceTests
         }
     }
 
-    private sealed class FakeMembershipRepository(OrganizationMembership? membership)
+    private sealed class FakeMembershipRepository(
+        ApplicationUser user,
+        OrganizationMembership? membership)
         : IMembershipRepository
     {
         public Task<OrganizationMembership?> GetAsync(
@@ -139,12 +141,13 @@ public sealed class OrganizationAccessServiceTests
             return Task.FromResult(result);
         }
 
-        public Task<IReadOnlyCollection<OrganizationMembership>> ListForOrganizationAsync(
+        public Task<IReadOnlyCollection<MembershipDetails>> ListForOrganizationAsync(
             Guid organizationId,
             CancellationToken cancellationToken)
         {
-            IReadOnlyCollection<OrganizationMembership> results =
-                membership is null ? [] : [membership];
+            IReadOnlyCollection<MembershipDetails> results = membership is null
+                ? []
+                : [new MembershipDetails(membership, user)];
             return Task.FromResult(results);
         }
 

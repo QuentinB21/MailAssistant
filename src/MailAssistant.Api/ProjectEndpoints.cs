@@ -149,7 +149,7 @@ public static class ProjectEndpoints
             async (
                 Guid organizationId,
                 MatchingTestRequest request,
-                ProjectService service,
+                SubjectMatchingService service,
                 CancellationToken cancellationToken) =>
             {
                 return Results.Ok(

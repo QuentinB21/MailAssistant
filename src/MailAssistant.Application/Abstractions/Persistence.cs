@@ -1,11 +1,16 @@
+using MailAssistant.Domain.Identity;
 using MailAssistant.Domain.Organizations;
 using MailAssistant.Domain.Projects;
 
 namespace MailAssistant.Application.Abstractions;
 
+public sealed record OrganizationAccessRecord(
+    Organization Organization,
+    OrganizationRole Role);
+
 public interface IOrganizationRepository
 {
-    Task<IReadOnlyCollection<Organization>> ListForUserAsync(
+    Task<IReadOnlyCollection<OrganizationAccessRecord>> ListForUserAsync(
         Guid userId,
         CancellationToken cancellationToken);
 

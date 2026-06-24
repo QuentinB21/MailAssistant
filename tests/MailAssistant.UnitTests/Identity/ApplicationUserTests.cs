@@ -45,4 +45,16 @@ public sealed class ApplicationUserTests
         Assert.Equal("Updated User", user.DisplayName);
         Assert.Equal(later, user.UpdatedAt);
     }
+
+    [Fact]
+    public void CreateNormalizesEmailForStableLookup()
+    {
+        var user = ApplicationUser.Create(
+            "subject",
+            " User@Test.Local ",
+            "Test User",
+            new DateTimeOffset(2026, 6, 24, 12, 0, 0, TimeSpan.Zero));
+
+        Assert.Equal("user@test.local", user.Email);
+    }
 }

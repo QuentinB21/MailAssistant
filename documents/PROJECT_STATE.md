@@ -14,7 +14,7 @@ chaque session significative. La vision et le découpage sont dans
 - Statut du MVP : cœur métier sécurisé, interface fonctionnelle à construire.
 - Dépôt Git : branche `main` reliée à `origin/main`.
 - Code applicatif : API CRUD projets/alias, matching, worker et frontend présents.
-- Tests : 21 tests .NET et 2 tests Vitest validés.
+- Tests : 27 tests .NET et 2 tests Vitest validés.
 - Infrastructure locale : PostgreSQL, RabbitMQ et Keycloak validés avec Docker
   Compose.
 
@@ -57,6 +57,14 @@ chaque session significative. La vision et le découpage sont dans
 - [x] Intégration React avec `keycloak-js` et PKCE S256.
 - [x] Conservation des tokens uniquement en mémoire côté frontend.
 - [x] Ajout d’un scénario d’intégration d’authentification reproductible.
+- [x] Centralisation de la documentation dans `documents/`.
+- [x] Remplacement des scripts PowerShell par des outils Node.js multiplateformes.
+- [x] Ajout des commandes racine `dev`, `verify` et `test:auth`.
+- [x] Réduction des requêtes N+1 sur les organisations et membres.
+- [x] Extraction du matching manuel hors du service CRUD des projets.
+- [x] Formalisation explicite de la hiérarchie des rôles.
+- [x] Normalisation des emails pour une recherche stable.
+- [x] Mise en place d’une revue qualité après chaque groupe de trois itérations.
 
 ## Prochaine étape recommandée
 
@@ -88,9 +96,10 @@ propriétaire du projet :
 | D-009 | Cibler .NET 10 pour le backend | Acceptée, remplace la décision initiale .NET 8 |
 | D-010 | Exiger Node.js 22.12+ et utiliser React avec Vite | Acceptée |
 | D-011 | Keycloak gère l’identité, les rôles tenant restent locaux | Acceptée, ADR 0005 |
+| D-012 | Réaliser une revue cleanup/refactoring toutes les trois itérations | Acceptée |
 
 Lorsqu’une décision devient stable, créer un fichier dans
-`docs/adr/NNNN-titre.md`, puis remplacer son statut par `Acceptée`.
+`documents/adr/NNNN-titre.md`, puis remplacer son statut par `Acceptée`.
 
 ## Questions ouvertes
 
@@ -197,6 +206,25 @@ Les intégrations réelles demanderont ultérieurement :
   et doit être absent de la configuration de production.
 - Prochaine action exacte : construire l’interface projets/alias sur les API
   sécurisées.
+
+### 2026-06-24 — revue qualité après les itérations 0 à 2
+
+- Objectif : réduire la dette avant le démarrage de l’interface métier.
+- Documentation : tous les documents hors README ont été déplacés dans
+  `documents/`, avec correction des liens.
+- Portabilité : suppression des scripts PowerShell et remplacement par des
+  outils Node.js multiplateformes exposés via `npm run`.
+- Refactoring : extraction de `SubjectMatchingService`, hiérarchie de rôles
+  explicite, normalisation des emails et suppression de requêtes N+1.
+- Outillage : CI alignée sur `npm run verify`, démarrage local unifié avec
+  `npm run dev`, scénario de sécurité avec `npm run test:auth`.
+- Tests exécutés : 27 tests xUnit, 2 tests Vitest, build sans avertissement,
+  formatage, migration cohérente, lint/build/audit frontend, Docker Compose et
+  scénario Keycloak/PostgreSQL/API.
+- Dette différée : les endpoints Minimal API seront découpés lorsque le nombre
+  de fonctionnalités augmentera ; les versions majeures React 19/TypeScript 6
+  ne sont pas introduites pendant une passe sans changement fonctionnel.
+- Prochaine action exacte : démarrer l’itération 3 sur le socle nettoyé.
 
 ## Modèle de mise à jour pour la prochaine session
 
