@@ -1,14 +1,15 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { api } from "../api/apiClient";
-import type { Organization, Project } from "../api/types";
+import type { GmailAccount, Organization, Project } from "../api/types";
 import type { AuthSession } from "../auth/auth";
 import { Dashboard } from "./Dashboard";
 import { MatchingTester } from "./MatchingTester";
+import { MailAccountsPanel } from "./MailAccountsPanel";
 import { ProjectManager } from "./ProjectManager";
 import { SettingsPanel } from "./SettingsPanel";
 import { StatusMessage } from "./StatusMessage";
 
-type View = "dashboard" | "projects" | "matching" | "settings";
+type View = "dashboard" | "projects" | "accounts" | "matching" | "settings";
 
 interface WorkspaceProps {
   session: AuthSession;
@@ -17,6 +18,7 @@ interface WorkspaceProps {
 const viewLabels: Record<View, string> = {
   dashboard: "Tableau de bord",
   projects: "Projets",
+  accounts: "Comptes email",
   matching: "Tester un sujet",
   settings: "Paramètres",
 };
@@ -27,6 +29,7 @@ export function Workspace({ session }: WorkspaceProps) {
     string | null
   >(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [gmailAccounts, setGmailAccounts] = useState<GmailAccount[]>([]);
   const [view, setView] = useState<View>("dashboard");
   const [organizationName, setOrganizationName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -85,6 +88,7 @@ export function Workspace({ session }: WorkspaceProps) {
   useEffect(() => {
     if (!selectedOrganizationId) {
       setProjects([]);
+      setGmailAccounts([]);
       return;
     }
 
@@ -93,9 +97,14 @@ export function Workspace({ session }: WorkspaceProps) {
       selectedOrganizationId,
     );
     setError(null);
-    api
-      .listProjects(session, selectedOrganizationId)
-      .then(setProjects)
+    Promise.all([
+      api.listProjects(session, selectedOrganizationId),
+      api.listGmailAccounts(session, selectedOrganizationId),
+    ])
+      .then(([projectResults, gmailResults]) => {
+        setProjects(projectResults);
+        setGmailAccounts(gmailResults);
+      })
       .catch((requestError: unknown) =>
         setError(
           requestError instanceof Error
@@ -221,6 +230,8 @@ export function Workspace({ session }: WorkspaceProps) {
                   ? "⌂"
                   : item === "projects"
                     ? "▣"
+                  : item === "accounts"
+                    ? "@"
                     : item === "matching"
                       ? "✓"
                       : "⚙"}
@@ -256,6 +267,16 @@ export function Workspace({ session }: WorkspaceProps) {
           <Dashboard
             organization={selectedOrganization}
             projects={projects}
+            gmailAccounts={gmailAccounts}
+          />
+        )}
+        {view === "accounts" && (
+          <MailAccountsPanel
+            session={session}
+            organizationId={selectedOrganization.id}
+            accounts={gmailAccounts}
+            canManage={canManage}
+            onAccountsChange={setGmailAccounts}
           />
         )}
         {view === "projects" && (

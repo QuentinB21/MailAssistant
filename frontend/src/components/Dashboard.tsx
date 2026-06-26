@@ -1,11 +1,16 @@
-import type { Organization, Project } from "../api/types";
+import type { GmailAccount, Organization, Project } from "../api/types";
 
 interface DashboardProps {
   organization: Organization;
   projects: Project[];
+  gmailAccounts: GmailAccount[];
 }
 
-export function Dashboard({ organization, projects }: DashboardProps) {
+export function Dashboard({
+  organization,
+  projects,
+  gmailAccounts,
+}: DashboardProps) {
   const activeProjects = projects.filter((project) => project.isActive);
   const aliasCount = projects.reduce(
     (total, project) =>
@@ -42,13 +47,19 @@ export function Dashboard({ organization, projects }: DashboardProps) {
         </article>
         <article className="metric-card">
           <span>Comptes connectés</span>
-          <strong>0</strong>
-          <small>Gmail et Outlook arrivent aux prochaines itérations</small>
+          <strong>{gmailAccounts.length}</strong>
+          <small>Compte(s) Gmail autorisé(s)</small>
         </article>
         <article className="metric-card">
           <span>Tri automatique</span>
-          <strong className="metric-text">En attente</strong>
-          <small>Le moteur de règles est prêt</small>
+          <strong className="metric-text">
+            {gmailAccounts.some(
+              (account) => account.isAutomaticClassificationEnabled,
+            )
+              ? "Actif"
+              : "En attente"}
+          </strong>
+          <small>Activation configurée par compte</small>
         </article>
       </div>
 
@@ -68,7 +79,7 @@ export function Dashboard({ organization, projects }: DashboardProps) {
             <span>2</span>
             Des alias pour les sujets non standardisés
           </li>
-          <li>
+          <li className={gmailAccounts.length > 0 ? "complete" : ""}>
             <span>3</span>
             Un compte Gmail ou Outlook connecté
           </li>

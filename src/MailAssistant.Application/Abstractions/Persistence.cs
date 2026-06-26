@@ -1,4 +1,5 @@
 using MailAssistant.Domain.Identity;
+using MailAssistant.Domain.MailAccounts;
 using MailAssistant.Domain.Organizations;
 using MailAssistant.Domain.Projects;
 
@@ -46,6 +47,51 @@ public interface IProjectRepository
     Task AddAsync(Project project, CancellationToken cancellationToken);
 
     void Remove(Project project);
+}
+
+public interface IMailAccountRepository
+{
+    Task<IReadOnlyCollection<MailAccount>> ListAsync(
+        Guid organizationId,
+        CancellationToken cancellationToken);
+
+    Task<MailAccount?> GetAsync(
+        Guid organizationId,
+        Guid mailAccountId,
+        CancellationToken cancellationToken);
+
+    Task<MailAccount?> GetByProviderAddressAsync(
+        Guid organizationId,
+        MailProvider provider,
+        string emailAddress,
+        CancellationToken cancellationToken);
+
+    Task AddAsync(MailAccount account, CancellationToken cancellationToken);
+
+    void Remove(MailAccount account);
+}
+
+public interface IOAuthCredentialRepository
+{
+    Task<OAuthCredential?> GetAsync(
+        Guid mailAccountId,
+        CancellationToken cancellationToken);
+
+    Task AddAsync(OAuthCredential credential, CancellationToken cancellationToken);
+
+    void Remove(OAuthCredential credential);
+}
+
+public interface IProviderClassificationTargetRepository
+{
+    Task<ProviderClassificationTarget?> GetAsync(
+        Guid mailAccountId,
+        Guid projectId,
+        CancellationToken cancellationToken);
+
+    Task AddAsync(
+        ProviderClassificationTarget target,
+        CancellationToken cancellationToken);
 }
 
 public interface IUnitOfWork

@@ -53,7 +53,8 @@ describe("App", () => {
             aliases: [],
           },
         ]),
-      );
+      )
+      .mockImplementationOnce(() => jsonResponse([]));
 
     render(<App session={session} />);
 

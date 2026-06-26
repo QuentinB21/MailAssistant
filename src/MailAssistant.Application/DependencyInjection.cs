@@ -1,4 +1,5 @@
 using MailAssistant.Application.Identity;
+using MailAssistant.Application.MailAccounts;
 using MailAssistant.Application.Organizations;
 using MailAssistant.Application.Projects;
 using MailAssistant.Domain.Matching;
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<CurrentUserService>();
         services.AddScoped<OrganizationAccessService>();
         services.AddScoped<MembershipService>();
+        services.AddScoped<GmailAccountService>();
 
         return services;
     }

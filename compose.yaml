@@ -81,8 +81,15 @@ services:
       Authentication__RequireHttpsMetadata: "false"
       Frontend__Origins__0: http://localhost:5173
       Frontend__Origins__1: http://127.0.0.1:5173
+      Frontend__PublicUrl: http://localhost:5173
+      Gmail__ClientId: ${GMAIL_CLIENT_ID:-}
+      Gmail__ClientSecret: ${GMAIL_CLIENT_SECRET:-}
+      Gmail__CallbackUrl: ${GMAIL_CALLBACK_URL:-http://localhost:5080/api/integrations/gmail/callback}
+      DataProtection__KeysPath: /var/lib/mailassistant/data-protection
     ports:
       - "${API_PORT:-5080}:8080"
+    volumes:
+      - data-protection-keys:/var/lib/mailassistant/data-protection
     depends_on:
       postgres:
         condition: service_healthy
@@ -126,3 +133,4 @@ volumes:
   postgres-data:
   rabbitmq-data:
   keycloak-data:
+  data-protection-keys:

@@ -60,3 +60,26 @@ export interface MatchingResult {
   selectedProjectId: string | null;
   matches: ProjectMatch[];
 }
+
+export interface GmailAccount {
+  id: string;
+  organizationId: string;
+  emailAddress: string;
+  isAutomaticClassificationEnabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GmailAuthorization {
+  authorizationUrl: string;
+}
+
+export interface GmailManualClassification {
+  outcome: MatchOutcome;
+  normalizedSubject: string;
+  projectId: string | null;
+  projectName: string | null;
+  labelName: string | null;
+  labelApplied: boolean;
+  archived: boolean;
+}

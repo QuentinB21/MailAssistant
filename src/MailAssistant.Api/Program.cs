@@ -51,6 +51,7 @@ app.MapHealthChecks("/health");
 app.MapOrganizationEndpoints();
 app.MapProjectEndpoints();
 app.MapIdentityEndpoints();
+app.MapGmailEndpoints();
 
 app.Run();
 

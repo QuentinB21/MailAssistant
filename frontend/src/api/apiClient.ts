@@ -1,6 +1,9 @@
 import type { AuthSession } from "../auth/auth";
 import type {
   MatchingResult,
+  GmailAccount,
+  GmailAuthorization,
+  GmailManualClassification,
   Organization,
   OrganizationSettings,
   Project,
@@ -191,5 +194,59 @@ export const api = {
         method: "PUT",
         body: JSON.stringify(settings),
       },
+    ),
+
+  listGmailAccounts: (session: AuthSession, organizationId: string) =>
+    request<GmailAccount[]>(
+      session,
+      `/api/organizations/${organizationId}/mail-accounts/gmail`,
+    ),
+
+  createGmailAuthorization: (
+    session: AuthSession,
+    organizationId: string,
+  ) =>
+    request<GmailAuthorization>(
+      session,
+      `/api/organizations/${organizationId}/mail-accounts/gmail/authorization`,
+      { method: "POST" },
+    ),
+
+  updateGmailAccount: (
+    session: AuthSession,
+    organizationId: string,
+    mailAccountId: string,
+    isAutomaticClassificationEnabled: boolean,
+  ) =>
+    request<GmailAccount>(
+      session,
+      `/api/organizations/${organizationId}/mail-accounts/gmail/${mailAccountId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ isAutomaticClassificationEnabled }),
+      },
+    ),
+
+  disconnectGmailAccount: (
+    session: AuthSession,
+    organizationId: string,
+    mailAccountId: string,
+  ) =>
+    request<void>(
+      session,
+      `/api/organizations/${organizationId}/mail-accounts/gmail/${mailAccountId}`,
+      { method: "DELETE" },
+    ),
+
+  classifyGmailMessage: (
+    session: AuthSession,
+    organizationId: string,
+    mailAccountId: string,
+    messageId: string,
+  ) =>
+    request<GmailManualClassification>(
+      session,
+      `/api/organizations/${organizationId}/mail-accounts/gmail/${mailAccountId}/manual-classifications`,
+      jsonBody({ messageId }),
     ),
 };

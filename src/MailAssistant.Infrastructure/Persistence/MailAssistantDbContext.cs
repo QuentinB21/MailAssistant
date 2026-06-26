@@ -1,5 +1,6 @@
 using MailAssistant.Application.Abstractions;
 using MailAssistant.Domain.Identity;
+using MailAssistant.Domain.MailAccounts;
 using MailAssistant.Domain.Organizations;
 using MailAssistant.Domain.Projects;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,13 @@ public sealed class MailAssistantDbContext(DbContextOptions<MailAssistantDbConte
     public DbSet<Project> Projects => Set<Project>();
 
     public DbSet<ProjectAlias> ProjectAliases => Set<ProjectAlias>();
+
+    public DbSet<MailAccount> MailAccounts => Set<MailAccount>();
+
+    public DbSet<OAuthCredential> OAuthCredentials => Set<OAuthCredential>();
+
+    public DbSet<ProviderClassificationTarget> ProviderClassificationTargets =>
+        Set<ProviderClassificationTarget>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

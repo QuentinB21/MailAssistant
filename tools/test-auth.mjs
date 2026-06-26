@@ -159,6 +159,21 @@ try {
     `${basePath}/projects`,
     outsider,
   );
+  const memberGmailRead = await apiRequest(
+    "GET",
+    `${basePath}/mail-accounts/gmail`,
+    member,
+  );
+  const memberGmailAuthorization = await apiRequest(
+    "POST",
+    `${basePath}/mail-accounts/gmail/authorization`,
+    member,
+  );
+  const ownerGmailAuthorization = await apiRequest(
+    "POST",
+    `${basePath}/mail-accounts/gmail/authorization`,
+    owner,
+  );
 
   const checks = [
     [unauthenticated.status, 401, "unauthenticated request"],
@@ -166,6 +181,9 @@ try {
     [memberRead.status, 200, "member read"],
     [memberWrite.status, 403, "member write"],
     [outsiderRead.status, 403, "outsider read"],
+    [memberGmailRead.status, 200, "member Gmail read"],
+    [memberGmailAuthorization.status, 403, "member Gmail authorization"],
+    [ownerGmailAuthorization.status, 503, "unconfigured Gmail authorization"],
   ];
 
   for (const [actual, expected, label] of checks) {

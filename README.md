@@ -82,6 +82,9 @@ les rôles et la séparation entre administration Keycloak et utilisateurs
 applicatifs sont documentés dans
 [`documents/authentication.md`](documents/authentication.md).
 
+La configuration Google Cloud et le flux Gmail sont documentés dans
+[`documents/gmail-oauth.md`](documents/gmail-oauth.md).
+
 Toutes les routes métier nécessitent un JWT Keycloak valide :
 
 - `GET /api/me`
@@ -90,6 +93,7 @@ Toutes les routes métier nécessitent un JWT Keycloak valide :
 - CRUD `/api/organizations/{organizationId}/projects/{projectId}/aliases`
 - `POST /api/organizations/{organizationId}/matching-tests`
 - paramètres `/api/organizations/{organizationId}/settings`
+- comptes Gmail `/api/organizations/{organizationId}/mail-accounts/gmail`
 - gestion `/api/organizations/{organizationId}/members`
 
 ## Structure

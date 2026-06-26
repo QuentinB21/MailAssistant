@@ -78,3 +78,45 @@ projets : le moteur retourne alors un conflit explicite.
 L’itération 1 utilise une suppression physique, car aucun historique de
 traitement ne référence encore les projets. Une suppression logique sera
 introduite avant que l’historique rende ces références durables.
+
+## MailAccount
+
+Compte de messagerie connecté à une organisation.
+
+- `Id`
+- `OrganizationId`
+- `ConnectedByUserId`
+- `Provider`
+- `EmailAddress`
+- `IsAutomaticClassificationEnabled`
+- `CreatedAt`
+- `UpdatedAt`
+
+Une adresse Gmail ne peut être connectée qu’une fois par organisation.
+
+## OAuthCredential
+
+Credential fournisseur associé à un compte mail.
+
+- `MailAccountId`
+- `EncryptedRefreshToken`
+- `GrantedScopes`
+- `CreatedAt`
+- `UpdatedAt`
+
+Le token d’accès n’est pas persisté. Le refresh token est chiffré avant toute
+écriture en base.
+
+## ProviderClassificationTarget
+
+Correspondance entre un projet interne et une cible propre à un compte.
+
+- `Id`
+- `MailAccountId`
+- `ProjectId`
+- `ExternalTargetId`
+- `ExternalTargetName`
+- `CreatedAt`
+- `UpdatedAt`
+
+Pour Gmail, la cible externe est un label.

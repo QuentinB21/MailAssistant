@@ -21,6 +21,12 @@ public sealed class ApiExceptionHandler : IExceptionHandler
             ArgumentException => (StatusCodes.Status400BadRequest, "Invalid request"),
             KeyNotFoundException => (StatusCodes.Status404NotFound, "Resource not found"),
             InvalidOperationException => (StatusCodes.Status409Conflict, "Request conflict"),
+            IntegrationNotConfiguredException => (
+                StatusCodes.Status503ServiceUnavailable,
+                "Integration not configured"),
+            ExternalIntegrationException => (
+                StatusCodes.Status502BadGateway,
+                "External integration error"),
             _ => (0, string.Empty),
         };
 

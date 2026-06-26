@@ -13,8 +13,9 @@ chaque session significative. La vision et le découpage sont dans
 - Dernière itération terminée : itération 3 — interface projets et paramètres.
 - Statut du MVP : cœur métier sécurisé et utilisable depuis l’interface.
 - Dépôt Git : branche `main` reliée à `origin/main`.
-- Code applicatif : API métier sécurisée, worker et interface de gestion présents.
-- Tests : 29 tests .NET et 4 tests Vitest validés.
+- Code applicatif : API métier sécurisée, intégration Gmail préparée, worker et
+  interface de gestion présents.
+- Tests : 32 tests .NET et 5 tests Vitest validés.
 - Infrastructure locale : PostgreSQL, RabbitMQ et Keycloak validés avec Docker
   Compose.
 
@@ -74,6 +75,12 @@ chaque session significative. La vision et le découpage sont dans
 - [x] Compatibilité locale avec `localhost` et `127.0.0.1`.
 - [x] Conteneurisation du frontend, de l’API et du Worker.
 - [x] Démarrage autonome de toute la stack avec `docker compose up`.
+- [x] Modélisation des comptes mail, credentials OAuth et cibles fournisseur.
+- [x] Chiffrement des refresh tokens avec clés persistées dans Docker.
+- [x] Implémentation du flux OAuth Gmail serveur et de la révocation.
+- [x] Implémentation de l’adaptateur Gmail pour profil, sujets, labels et
+  classement manuel.
+- [x] Ajout de la page de gestion des comptes Gmail.
 
 ## Prochaine étape recommandée
 
@@ -99,7 +106,7 @@ propriétaire du projet :
 | D-003 | Porter les projets et règles au niveau organisation | Acceptée, ADR 0004 |
 | D-004 | Classer un message dans un seul projet pour le MVP | Acceptée, ADR 0004 |
 | D-005 | En cas de correspondances multiples, ne rien classer et tracer un conflit | Acceptée, ADR 0004 |
-| D-006 | Gmail ajoute un label sans archiver par défaut | Proposée |
+| D-006 | Gmail ajoute un label sans archiver par défaut | Acceptée, ADR 0006 |
 | D-007 | Générer un client TypeScript depuis OpenAPI | Proposée |
 | D-008 | Éviter de conserver le sujet brut dans l’historique | Proposée |
 | D-009 | Cibler .NET 10 pour le backend | Acceptée, remplace la décision initiale .NET 8 |
@@ -114,7 +121,7 @@ Lorsqu’une décision devient stable, créer un fichier dans
 
 - [x] Les projets sont exclusivement partagés par organisation.
 - [x] Un utilisateur peut appartenir à plusieurs organisations.
-- [ ] Qui peut connecter et administrer un compte mail ?
+- [x] Owner et Admin administrent les comptes ; Member les consulte.
 - [ ] Faut-il autoriser plusieurs labels Gmail en cas de plusieurs matchs ?
 - [ ] Quelle durée de conservation pour l’historique et les sujets ?
 - [ ] Quelle cible de déploiement est prévue pour le MVP ?
@@ -124,7 +131,9 @@ Lorsqu’une décision devient stable, créer un fichier dans
 
 ## Bloquants
 
-Aucun bloquant dans le code pour démarrer l’itération 4.
+Le flux réel Gmail attend les identifiants d’un client OAuth Google et un compte
+Gmail de test. Le code, la migration, l’interface et le comportement sans
+configuration sont validés.
 
 Node.js 22.23.1 est installé via WinGet. Les terminaux ouverts avant
 l’installation doivent être redémarrés pour récupérer le nouveau `PATH`.
@@ -262,6 +271,28 @@ de test et une URL de callback OAuth explicitement autorisée.
   génération OpenAPI pourra le remplacer lorsque le contrat API se stabilisera.
 - Prochaine action exacte : cadrer les credentials Google Cloud et commencer
   l’itération 4 par le modèle de comptes Gmail et la protection des tokens.
+
+### 2026-06-24 — itération 4, incrément Gmail OAuth
+
+- Itération : 4 — connexion Gmail et classement manuel, en cours.
+- Objectif : construire tout le flux testable avant de disposer des credentials
+  Google Cloud.
+- Réalisé : comptes Gmail multi-tenant, refresh tokens chiffrés, état OAuth
+  protégé et expirant, échange/renouvellement/révocation, lecture du profil et
+  du sujet, gestion des labels, classement manuel et interface dédiée.
+- Sécurité : access tokens non persistés, clé Data Protection dans un volume
+  Docker, callback lié à l’organisation et à l’utilisateur Admin ayant démarré
+  le consentement.
+- Tests exécutés : 32 tests xUnit, 5 tests Vitest, build/lint frontend, build
+  .NET, migration cohérente, stack Docker healthy et contrôle UI réel.
+- Décision : flux serveur, scope restreint `gmail.modify`, Owner/Admin en
+  écriture et Member en lecture, ADR 0006.
+- Risques ou dettes : validation réelle OAuth, renouvellement, révocation et
+  classement bloqués jusqu’à fourniture d’un client Google de test ; la
+  publication publique demandera la procédure de vérification Google.
+- Prochaine action exacte : renseigner `GMAIL_CLIENT_ID` et
+  `GMAIL_CLIENT_SECRET`, puis exécuter le parcours réel sur un compte Gmail de
+  test.
 
 ## Modèle de mise à jour pour la prochaine session
 
